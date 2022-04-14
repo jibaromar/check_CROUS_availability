@@ -3,6 +3,9 @@ import 'dotenv/config'
 import {headers, cities} from "./config/globals.js"
 import sendSms from "./notification/sendSms.js"
 
+if (process.env.INTERVAL == undefined)
+  throw new Error("app not yet configured");
+
 let isSentNotification = false;
 
 const checkAvailability = () => {
@@ -11,17 +14,27 @@ const checkAvailability = () => {
     "body": cities[process.env.CITY],
     "method": "POST"
   })
-    .then(response => response.json())
+    .then(response => {
+      if(response.headers.get('Content-Type') === "application/json"){
+        return response.json();
+      }
+      throw new Error(`[${new Date()}] - The API didn't return a valid JSON object`);
+    })
     .then(data => {
-        console.log(data?.results?.total);
-        if (data?.results?.total === 0){
+        if(data === undefined){
+          return;
+        }
+        if (data.results?.total === 0){
           isSentNotification = false;
           return;
         }
-        if(isSentNotification === false){
+        if(data.results?.total !== undefined && isSentNotification === false){
           sendSms(`${new Date()}\n\nLyon got some new rooms: Total=${data.results.total}\n\n`);
           isSentNotification = true;
         }
+    })
+    .catch(error => {
+      console.error(error);
     });
 }
 
