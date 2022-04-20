@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 export const headers = {
     "accept": "application/ld+json, application/json",
     "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -14,4 +16,12 @@ export const headers = {
 export const cities = {
     Lyon: '{"precision":6,"need_aggregation":true,"page":1,"pageSize":24,"sector":null,"idTool":21,"occupationModes":[],"equipment":[],"price":{"min":0,"max":null},"location":[{"lon":4.7718,"lat":45.8083},{"lon":4.8984,"lat":45.7074}]}',
     Vannes: '{"precision":6,"need_aggregation":true,"page":1,"pageSize":24,"sector":null,"idTool":21,"occupationModes":[],"equipment":[],"price":{"min":0,"max":null},"location":[{"lon":-2.8155,"lat":47.6946},{"lon":-2.6817,"lat":47.6208}]}'
+}
+
+export const isConfigured = () => {
+    return process.env.VONAGE_API_KEY !== undefined
+        && process.env.VONAGE_API_SECRET !== undefined 
+        && process.env.PHONE_NUMBER !== undefined 
+        && process.env.CITY !== undefined 
+        && process.env.INTERVAL !== undefined 
 }
